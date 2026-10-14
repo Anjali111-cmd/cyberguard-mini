@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberGuard AI - Dashboard</title>
+  <title>CyberGuard AI - Admin Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <div class="dashboard-header">
       <h2>CyberGuard AI Admin Dashboard</h2>
       <div>
-        <a href="index.html" class="nav-link" style="margin-right:15px;">Public Portal</a>
+        <a href="index.html" class="nav-link" style="margin-right:15px;">Public Site</a>
         <button id="logoutBtn" class="btn-logout">Logout</button>
       </div>
     </div>
@@ -20,8 +20,8 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Reporter</th>
-          <th>Category</th>
+          <th>User</th>
+          <th>Type</th>
           <th>Description</th>
           <th>Date</th>
           <th>Action</th>
@@ -29,7 +29,7 @@
       </thead>
       <tbody id="complaintsContainer">
         <tr>
-          <td colspan="6" style="text-align:center; padding: 20px;">Loading incident reports...</td>
+          <td colspan="6" style="text-align:center; padding: 20px;">Fetching complaints...</td>
         </tr>
       </tbody>
     </table>

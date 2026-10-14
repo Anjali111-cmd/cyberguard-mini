@@ -5,10 +5,11 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 require('dotenv').config();
 
-const Complaint = require('./models/complaint');
+const Complaint = require('./models/Complaint');
 
 const app = express();
 
+// Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(cors({
   origin: '*',
@@ -27,30 +28,6 @@ mongoose.connect(process.env.MONGO_URI)
 // API Health Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'CyberGuard AI Backend is Running' });
-});
-
-// Submit Complaint Endpoint (Public)
-app.post('/api/complaints', async (req, res) => {
-  try {
-    const { userName, type, description } = req.body;
-    if (!type || !description) {
-      return res.status(400).json({ error: 'Complaint type and description are required.' });
-    }
-
-    const customId = 'CG-' + Math.floor(100000 + Math.random() * 900000);
-    const newComplaint = new Complaint({
-      id: customId,
-      userName: userName || 'Anonymous',
-      type,
-      description
-    });
-
-    await newComplaint.save();
-    res.status(201).json({ success: true, complaint: newComplaint });
-  } catch (err) {
-    console.error('Save complaint error:', err);
-    res.status(500).json({ error: 'Failed to save complaint' });
-  }
 });
 
 // Admin Login Endpoint
@@ -86,8 +63,18 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// Fetch Complaints (Protected)
-app.get('/api/complaints', verifyAdmin, async (req, res) => {
+// Complaint Routes
+app.post('/api/complaints', async (req, res) => {
+  try {
+    const newComplaint = new Complaint(req.body);
+    await newComplaint.save();
+    res.status(201).json(newComplaint);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save complaint' });
+  }
+});
+
+app.get('/api/complaints', async (req, res) => {
   try {
     const complaints = await Complaint.find().sort({ createdAt: -1 });
     res.json(complaints);
@@ -96,7 +83,6 @@ app.get('/api/complaints', verifyAdmin, async (req, res) => {
   }
 });
 
-// Delete Complaint Endpoint (Protected)
 app.delete('/api/complaints/:id', verifyAdmin, async (req, res) => {
   try {
     await Complaint.findOneAndDelete({ id: req.params.id });
@@ -106,11 +92,22 @@ app.delete('/api/complaints/:id', verifyAdmin, async (req, res) => {
   }
 });
 
-// HTML Page Routes
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+// Static Fallback Page Routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

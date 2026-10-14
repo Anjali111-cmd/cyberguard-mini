@@ -34,7 +34,7 @@ function renderComplaintsTable(complaints) {
   if (!container) return;
 
   if (!Array.isArray(complaints) || complaints.length === 0) {
-    container.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No incidents reported yet.</td></tr>';
+    container.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No complaints recorded.</td></tr>';
     return;
   }
 
@@ -46,16 +46,14 @@ function renderComplaintsTable(complaints) {
       <td>${c.description || ''}</td>
       <td>${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'N/A'}</td>
       <td>
-        <button onclick="deleteComplaint('${c.id || c._id}')" class="btn-delete">
-          Delete
-        </button>
+        <button onclick="deleteComplaint('${c.id || c._id}')" class="btn-delete">Delete</button>
       </td>
     </tr>
   `).join('');
 }
 
 async function deleteComplaint(id) {
-  if (!confirm(`Are you sure you want to delete incident record ${id}?`)) return;
+  if (!confirm(`Delete incident record ${id}?`)) return;
 
   try {
     const res = await fetch(`${API_URL}/${id}`, {

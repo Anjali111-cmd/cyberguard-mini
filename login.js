@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('adminToken', data.token);
           window.location.href = 'admin.html';
         } else {
-          alert(data.message || 'Invalid username or password!');
+          alert(data.message || 'Invalid login details');
         }
       } catch (err) {
         console.error('Login error:', err);
-        alert('Error connecting to backend.');
+        alert('Server connection error.');
       }
     });
   }

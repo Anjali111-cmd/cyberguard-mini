@@ -6,35 +6,34 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const userName = document.getElementById('userName')?.value.trim();
+      const userName = document.getElementById('userName')?.value.trim() || 'Anonymous';
       const type = document.getElementById('type')?.value;
       const description = document.getElementById('description')?.value.trim();
+      const customId = 'CG-' + Math.floor(100000 + Math.random() * 900000);
 
       statusBox.style.display = 'block';
       statusBox.className = 'status-box info';
-      statusBox.textContent = 'Submitting report...';
+      statusBox.textContent = 'Submitting...';
 
       try {
         const response = await fetch('/api/complaints', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userName, type, description })
+          body: JSON.stringify({ id: customId, userName, type, description })
         });
 
-        const data = await response.json();
-
-        if (response.ok && data.success) {
+        if (response.ok) {
           statusBox.className = 'status-box success';
-          statusBox.textContent = `✅ Report submitted successfully! Reference ID: ${data.complaint.id}`;
+          statusBox.textContent = `Incident report submitted successfully! Reference ID: ${customId}`;
           form.reset();
         } else {
           statusBox.className = 'status-box error';
-          statusBox.textContent = data.error || 'Failed to submit report.';
+          statusBox.textContent = 'Failed to submit report. Please try again.';
         }
       } catch (err) {
         console.error('Submission error:', err);
         statusBox.className = 'status-box error';
-        statusBox.textContent = 'Could not connect to the server.';
+        statusBox.textContent = 'Server connection error.';
       }
     });
   }
