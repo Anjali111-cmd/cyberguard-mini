@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const path = require('path');
 require('dotenv').config();
 
 const Complaint = require('./models/Complaint');
@@ -16,15 +15,29 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname)));
+// MongoDB Connection Cache for Vercel Serverless
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  if (!process.env.MONGO_URI) {
+    console.error('MONGO_URI is missing from Environment Variables');
+    return;
+  }
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    isConnected = db.connections[0].readyState;
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error('MongoDB Connection Error:', err);
+  }
+};
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err));
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
-// Secure Admin Login Route
+// Admin Login Route
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   const envUsername = process.env.ADMIN_USERNAME || 'admin';
@@ -85,14 +98,5 @@ app.delete('/api/complaints/:id', verifyAdmin, async (req, res) => {
     res.status(500).json({ error: 'Failed to delete complaint' });
   }
 });
-
-// Static HTML Fallback Routes
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 module.exports = app;
