@@ -9,7 +9,6 @@ const Complaint = require('./models/Complaint');
 
 const app = express();
 
-// Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(cors({
   origin: '*',
@@ -17,7 +16,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Serve static frontend assets
+// Serve static frontend files
 app.use(express.static(path.join(__dirname)));
 
 // MongoDB Connection
@@ -25,12 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// API Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'CyberGuard AI Backend is Running' });
-});
-
-// Admin Login Endpoint
+// Secure Admin Login Route
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   const envUsername = process.env.ADMIN_USERNAME || 'admin';
@@ -48,10 +42,10 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// JWT Protection Middleware
+// Admin JWT Protection Middleware
 const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.status(403).json({ error: 'Access denied. No token provided.' });
+  if (!authHeader) return res.status(403).json({ error: 'Access denied.' });
 
   const token = authHeader.replace('Bearer ', '');
   try {
@@ -86,28 +80,17 @@ app.get('/api/complaints', async (req, res) => {
 app.delete('/api/complaints/:id', verifyAdmin, async (req, res) => {
   try {
     await Complaint.findOneAndDelete({ id: req.params.id });
-    res.json({ success: true, message: 'Complaint deleted successfully' });
+    res.json({ success: true, message: 'Complaint deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete complaint' });
   }
 });
 
-// Static Fallback Page Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/login.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-app.get('/admin.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
+// Static HTML Fallback Routes
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

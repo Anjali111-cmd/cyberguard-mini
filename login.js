@@ -1,34 +1,34 @@
-const API_BASE_URL = '/api/admin';
+const loginForm = document.getElementById("loginForm");
 
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
 
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const error = document.getElementById("loginError");
 
-      const usernameInput = document.getElementById('username')?.value;
-      const passwordInput = document.getElementById('password')?.value;
+        error.textContent = "";
 
-      try {
-        const response = await fetch(`${API_BASE_URL}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: usernameInput, password: passwordInput })
-        });
+        try {
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok && data.success) {
-          localStorage.setItem('adminToken', data.token);
-          window.location.href = 'admin.html';
-        } else {
-          alert(data.message || 'Invalid login details');
+            if (response.ok && data.success) {
+                sessionStorage.setItem("adminLoggedIn", "true");
+                sessionStorage.setItem("adminToken", data.token);
+                window.location.href = "admin.html";
+            } else {
+                error.textContent = data.message || "Invalid username or password.";
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            error.textContent = "Server communication error.";
         }
-      } catch (err) {
-        console.error('Login error:', err);
-        alert('Server connection error.');
-      }
     });
-  }
-});
+}

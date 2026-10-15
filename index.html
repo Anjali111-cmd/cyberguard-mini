@@ -1,50 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberGuard AI - Report Incident</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard AI | Cyber Complaint System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="navbar">
-    <div class="logo">🛡️ CyberGuard AI</div>
-    <a href="login.html" class="nav-link">Admin Login</a>
-  </div>
 
-  <div class="container">
-    <h2>Report a Cyber Incident</h2>
-    <p class="subtitle">Submit details regarding phishing, fraud, malware, or online harassment.</p>
+<header class="navbar">
+    <div class="brand">🛡️ CyberGuard <span>AI</span></div>
 
-    <form id="complaintForm">
-      <div class="form-group">
-        <label for="userName">Your Name (Optional)</label>
-        <input type="text" id="userName" placeholder="John Doe or Leave Blank for Anonymous">
-      </div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#report">Report</a>
+        <a href="#track">Track</a>
+        <a href="#about">About</a>
+        <a href="login.html">Admin</a>
+    </nav>
+</header>
 
-      <div class="form-group">
-        <label for="type">Incident Type</label>
-        <select id="type" required>
-          <option value="">Select Category</option>
-          <option value="Online Fraud">Online Fraud / Financial Scam</option>
-          <option value="Phishing">Phishing Attack</option>
-          <option value="Malware">Malware / Ransomware</option>
-          <option value="Harassment">Cyber Bullying / Harassment</option>
-          <option value="Other">Other Cyber Crime</option>
-        </select>
-      </div>
+<main>
 
-      <div class="form-group">
-        <label for="description">Incident Details</label>
-        <textarea id="description" rows="5" placeholder="Provide full details, URLs, or evidence references..." required></textarea>
-      </div>
+<section id="home" class="hero">
+    <div class="hero-content">
+        <span class="badge">SMART CYBER COMPLAINT SYSTEM</span>
 
-      <button type="submit" class="btn-submit">🚀 Submit Complaint</button>
+        <h1>
+            Report Cyber Crime.
+            <br>
+            <span>Track Your Complaint.</span>
+        </h1>
+
+        <p>
+            CyberGuard AI helps users register cyber complaints,
+            automatically analyze them and track complaint status.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#report" class="btn">Report Complaint</a>
+            <a href="#track" class="btn secondary">Track Complaint</a>
+        </div>
+    </div>
+
+    <div class="hero-icon">
+        🛡️
+    </div>
+</section>
+
+<section class="section">
+    <h2>Common Cyber Threats</h2>
+
+    <p class="section-subtitle">
+        Identify and report different types of cyber crimes.
+    </p>
+
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">💳</div>
+            <h3>Financial Fraud</h3>
+            <p>UPI, banking, payment and transaction related fraud.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🎣</div>
+            <h3>Phishing</h3>
+            <p>Fake links, OTP scams and suspicious websites.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🔐</div>
+            <h3>Account Hacking</h3>
+            <p>Unauthorized access and stolen passwords.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📱</div>
+            <h3>Social Media Fraud</h3>
+            <p>Fake profiles and fraud through social media.</p>
+        </div>
+    </div>
+</section>
+
+<section id="report" class="section form-section">
+    <h2>Register a Complaint</h2>
+
+    <p class="section-subtitle">
+        Enter your complaint below. CyberGuard AI will analyze it automatically.
+    </p>
+
+    <form id="complaintForm" class="form-card">
+        <label for="complaint">Complaint Description</label>
+
+        <textarea
+            id="complaint"
+            maxlength="1000"
+            placeholder="Example: Someone sent me a fake UPI link and asked for my OTP."
+            required
+        ></textarea>
+
+        <div class="form-info">
+            <span id="charCount">0 / 1000</span>
+            <button type="button" id="voiceBtn" class="small-btn">
+                🎙️ Voice Input
+            </button>
+        </div>
+
+        <div id="voiceControls" class="voice-controls hidden">
+            <button type="button" id="startVoice" class="small-btn">Start</button>
+            <button type="button" id="stopVoice" class="small-btn danger">Stop</button>
+            <button type="button" id="readVoice" class="small-btn">🔊 Read</button>
+            <span id="voiceStatus">Voice ready</span>
+        </div>
+
+        <label for="evidence">
+            Evidence Files
+            <small>(Optional - Maximum 5)</small>
+        </label>
+        <input type="file" id="evidence" multiple>
+        <div id="evidenceList" class="file-list"></div>
+
+        <label for="screenshots">
+            Screenshots
+            <small>(Optional - Maximum 3 images)</small>
+        </label>
+        <input type="file" id="screenshots" accept="image/*" multiple>
+        <div id="preview" class="preview-grid"></div>
+
+        <button type="submit" class="btn full">Submit Complaint</button>
     </form>
 
-    <div id="statusMessage" class="status-box" style="display:none;"></div>
-  </div>
+    <div id="submissionResult" class="result-box hidden"></div>
+</section>
 
-  <script src="index.js"></script>
+<section id="track" class="section track-section">
+    <h2>Track Complaint</h2>
+
+    <p class="section-subtitle">
+        Enter your complaint ID to check the current status.
+    </p>
+
+    <div class="track-card">
+        <input type="text" id="trackId" placeholder="Example: CG-123456">
+        <button id="trackBtn" class="btn">Track</button>
+    </div>
+
+    <div id="trackResult" class="result-box hidden"></div>
+</section>
+
+<section id="about" class="section about">
+    <h2>About CyberGuard AI</h2>
+
+    <p>
+        CyberGuard AI is a college mini-project prototype
+        designed for cyber complaint registration and tracking.
+    </p>
+
+    <div class="flow">
+        <span>Report</span> <b>→</b>
+        <span>AI Analysis</span> <b>→</b>
+        <span>Priority</span> <b>→</b>
+        <span>Track</span>
+    </div>
+
+    <p class="note">
+        Note: This prototype uses keyword-based automatic classification.
+        A real system would use a secure backend, database and trained ML/NLP model.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    © 2026 CyberGuard AI | College Mini Project
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>

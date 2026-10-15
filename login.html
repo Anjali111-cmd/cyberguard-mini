@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberGuard AI - Login</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | CyberGuard AI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="login-container">
-    <h2>CyberGuard AI</h2>
-    <p class="subtitle">Admin Authentication</p>
-    
+
+<body class="login-page">
+
+<div class="login-card">
+    <div class="login-logo">🛡️</div>
+    <h1>Admin Login</h1>
+    <p>CyberGuard AI Dashboard</p>
+
     <form id="loginForm">
-      <div class="form-group">
         <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Username" required>
-      </div>
+        <input type="text" id="username" placeholder="Enter username" required>
 
-      <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password" required>
-      </div>
+        <input type="password" id="password" placeholder="Enter password" required>
 
-      <button type="submit" class="btn-submit">Login</button>
+        <button type="submit" class="btn full">Login</button>
+        <p id="loginError" class="error"></p>
     </form>
-    <a href="index.html" class="back-link">← Return to Public Reporting</a>
-  </div>
 
-  <script src="login.js"></script>
+    <a href="index.html" class="back-link">← Back to Home</a>
+</div>
+
+<script src="login.js"></script>
 </body>
 </html>
