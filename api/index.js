@@ -4,7 +4,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const Complaint = require('./models/Complaint');
+const Complaint = require('../models/Complaint');
 
 const app = express();
 
@@ -15,16 +15,17 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// MongoDB Connection Cache for Vercel
 let isConnected = false;
 const connectDB = async () => {
   if (isConnected) return;
   if (!process.env.MONGO_URI) {
-    console.error('MONGO_URI missing');
+    console.error('MONGO_URI missing from environment variables');
     return;
   }
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI);
+    const db = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000
+    });
     isConnected = db.connections[0].readyState;
   } catch (err) {
     console.error('MongoDB Connection Error:', err);
@@ -36,7 +37,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Admin Login Endpoint
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   const envUsername = process.env.ADMIN_USERNAME || 'admin';
@@ -45,7 +45,7 @@ app.post('/api/admin/login', (req, res) => {
   if (username === envUsername && password === envPassword) {
     const token = jwt.sign(
       { role: 'admin' }, 
-      process.env.JWT_SECRET || 'secretkey', 
+      process.env.JWT_SECRET || 'supersecretkey123', 
       { expiresIn: '2h' }
     );
     return res.json({ success: true, token });
@@ -54,14 +54,13 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// JWT Verification Middleware
 const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) return res.status(403).json({ error: 'Access denied.' });
 
   const token = authHeader.replace('Bearer ', '');
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secretkey');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey123');
     req.admin = decoded;
     next();
   } catch (err) {
@@ -69,7 +68,6 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// Complaint API Routes
 app.post('/api/complaints', async (req, res) => {
   try {
     const newComplaint = new Complaint(req.body);
