@@ -15,18 +15,17 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// MongoDB Connection Cache for Vercel Serverless
+// MongoDB Connection Cache for Vercel
 let isConnected = false;
 const connectDB = async () => {
   if (isConnected) return;
   if (!process.env.MONGO_URI) {
-    console.error('MONGO_URI is missing from Environment Variables');
+    console.error('MONGO_URI missing');
     return;
   }
   try {
     const db = await mongoose.connect(process.env.MONGO_URI);
     isConnected = db.connections[0].readyState;
-    console.log('MongoDB Connected');
   } catch (err) {
     console.error('MongoDB Connection Error:', err);
   }
@@ -37,7 +36,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Admin Login Route
+// Admin Login Endpoint
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   const envUsername = process.env.ADMIN_USERNAME || 'admin';
@@ -55,7 +54,7 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// Admin JWT Protection Middleware
+// JWT Verification Middleware
 const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader) return res.status(403).json({ error: 'Access denied.' });
@@ -70,7 +69,7 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// Complaint Routes
+// Complaint API Routes
 app.post('/api/complaints', async (req, res) => {
   try {
     const newComplaint = new Complaint(req.body);
